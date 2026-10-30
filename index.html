@@ -1,0 +1,573 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080808">
+
+  <title>NFC MUSIC</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080808;
+      --card: #171717;
+      --border: #2a2a2a;
+      --text: #ffffff;
+      --muted: #999999;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Arial, sans-serif;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      padding: 35px 22px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 390px;
+      text-align: center;
+      animation: fadeIn .65s ease both;
+    }
+
+    .brand {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #777;
+      margin-bottom: 36px;
+    }
+
+    .cover-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .cover {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 13px;
+      background: #191919;
+      box-shadow:
+        0 20px 65px rgba(0, 0, 0, .65);
+    }
+
+    .title {
+      margin: 29px 0 8px;
+      font-size: 31px;
+      font-weight: 750;
+      letter-spacing: -1.1px;
+      line-height: 1.2;
+    }
+
+    .artist {
+      margin: 0;
+      font-size: 16px;
+      color: #b0b0b0;
+    }
+
+    .metadata {
+      margin-top: 13px;
+      color: #666;
+      font-size: 12px;
+      letter-spacing: 1.5px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #252525;
+      margin: 32px 0 26px;
+    }
+
+    .choose {
+      font-size: 12px;
+      color: #888;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .platforms {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .platform {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 17px 19px;
+
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 600;
+
+      transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease;
+    }
+
+    .platform:hover {
+      background: #242424;
+      border-color: #444;
+      transform: translateY(-2px);
+    }
+
+    .platform:active {
+      transform: scale(.98);
+    }
+
+    .platform:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 3px;
+    }
+
+    .platform-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .spotify {
+      background: #1db954;
+      color: #000;
+    }
+
+    .apple {
+      background: #fa425b;
+      color: #fff;
+    }
+
+    .youtube {
+      background: #ff0033;
+      color: #fff;
+    }
+
+    .arrow {
+      font-size: 19px;
+      color: #777;
+    }
+
+    .footer {
+      margin-top: 42px;
+      font-size: 10px;
+      color: #555;
+      letter-spacing: 2px;
+    }
+
+    .error {
+      color: #999;
+      line-height: 1.7;
+      margin-top: 15px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 360px) {
+      .title {
+        font-size: 27px;
+      }
+
+      .platform {
+        padding: 15px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <main class="container" id="app"></main>
+
+  <script>
+    // =====================================
+    // NFC MUSIC DATABASE
+    // =====================================
+
+    const albums = {
+
+      // ===================================
+      // 1. STARBOY
+      // ===================================
+
+      "starboy": {
+        title: "Starboy",
+        artist: "The Weeknd",
+        year: "2016",
+        type: "ALBUM",
+
+        cover: "covers/starboy.jpg",
+
+        links: {
+          spotify:
+            "https://open.spotify.com/album/2ODvWsOgouMbaA5xf0RkJe",
+
+          apple:
+            "https://music.apple.com/kz/album/starboy/1440871397",
+
+          youtube:
+            "https://youtu.be/34Na4j8AVgA"
+        },
+
+        youtubeLabel: "YouTube"
+      },
+
+
+      // ===================================
+      // 2. GRADUATION
+      // ===================================
+
+      "graduation": {
+        title: "Graduation",
+        artist: "Kanye West",
+        year: "2007",
+        type: "ALBUM",
+
+        cover: "covers/graduation.jpg",
+
+        links: {
+          spotify:
+            "https://open.spotify.com/album/4WNXpeZR1jc2NFgOAeyLMB",
+
+          apple:
+            "https://music.apple.com/us/album/graduation/1442845779",
+
+          youtube:
+            "https://music.youtube.com/search?q=Kanye%20West%20Graduation%20album"
+        },
+
+        youtubeLabel: "YouTube Music"
+      },
+
+
+      // ===================================
+      // 3. BLINDING LIGHTS
+      // ===================================
+
+      "blinding-lights": {
+        title: "Blinding Lights",
+        artist: "The Weeknd",
+        year: "2019",
+        type: "SINGLE",
+
+        cover: "covers/blinding-lights.jpg",
+
+        links: {
+          spotify:
+            "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b",
+
+          apple:
+            "https://music.apple.com/us/song/1488408568",
+
+          youtube:
+            "https://www.youtube.com/watch?v=4NRXx6U8ABQ"
+        },
+
+        youtubeLabel: "YouTube"
+      }
+
+    };
+
+
+    // =====================================
+    // READ NFC LINK
+    // =====================================
+
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    const albumId = params.get("album");
+
+    const album = Object.hasOwn(albums, albumId)
+      ? albums[albumId]
+      : null;
+
+    const app = document.getElementById("app");
+
+
+    // =====================================
+    // CREATE HTML ELEMENT
+    // =====================================
+
+    function createElement(tag, className, text) {
+      const element = document.createElement(tag);
+
+      if (className) {
+        element.className = className;
+      }
+
+      if (text !== undefined) {
+        element.textContent = text;
+      }
+
+      return element;
+    }
+
+
+    // =====================================
+    // PLATFORM BUTTON
+    // =====================================
+
+    function createPlatform(
+      name,
+      symbol,
+      iconClass,
+      url
+    ) {
+      if (!url) return null;
+
+      const link = createElement(
+        "a",
+        "platform"
+      );
+
+      link.href = url;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+
+      const left = createElement(
+        "span",
+        "platform-left"
+      );
+
+      const icon = createElement(
+        "span",
+        "icon " + iconClass,
+        symbol
+      );
+
+      const label = createElement(
+        "span",
+        "",
+        name
+      );
+
+      const arrow = createElement(
+        "span",
+        "arrow",
+        "↗"
+      );
+
+      left.append(icon, label);
+      link.append(left, arrow);
+
+      return link;
+    }
+
+
+    // =====================================
+    // SHOW ALBUM
+    // =====================================
+
+    if (album) {
+
+      document.title =
+        album.title + " — " + album.artist;
+
+      const brand = createElement(
+        "div",
+        "brand",
+        "NFC MUSIC"
+      );
+
+      const coverWrap = createElement(
+        "div",
+        "cover-wrap"
+      );
+
+      const cover = createElement(
+        "img",
+        "cover"
+      );
+
+      cover.src = album.cover;
+      cover.alt = album.title + " cover";
+      cover.loading = "eager";
+
+      coverWrap.appendChild(cover);
+
+      const title = createElement(
+        "h1",
+        "title",
+        album.title
+      );
+
+      const artist = createElement(
+        "p",
+        "artist",
+        album.artist
+      );
+
+      const metadata = createElement(
+        "div",
+        "metadata",
+        album.type + " · " + album.year
+      );
+
+      const divider = createElement(
+        "div",
+        "divider"
+      );
+
+      const choose = createElement(
+        "div",
+        "choose",
+        "Choose your platform"
+      );
+
+      const platforms = createElement(
+        "div",
+        "platforms"
+      );
+
+      const spotify = createPlatform(
+        "Spotify",
+        "♫",
+        "spotify",
+        album.links.spotify
+      );
+
+      const apple = createPlatform(
+        "Apple Music",
+        "♪",
+        "apple",
+        album.links.apple
+      );
+
+      const youtube = createPlatform(
+        album.youtubeLabel,
+        "▶",
+        "youtube",
+        album.links.youtube
+      );
+
+      [spotify, apple, youtube].forEach(
+        button => {
+          if (button) {
+            platforms.appendChild(button);
+          }
+        }
+      );
+
+      const footer = createElement(
+        "div",
+        "footer",
+        "MADE FOR MUSIC LOVERS"
+      );
+
+      app.append(
+        brand,
+        coverWrap,
+        title,
+        artist,
+        metadata,
+        divider,
+        choose,
+        platforms,
+        footer
+      );
+
+    } else {
+
+      // ===================================
+      // INVALID NFC LINK
+      // ===================================
+
+      document.title = "NFC MUSIC";
+
+      const brand = createElement(
+        "div",
+        "brand",
+        "NFC MUSIC"
+      );
+
+      const title = createElement(
+        "h1",
+        "title",
+        "Album Not Found"
+      );
+
+      const message = createElement(
+        "p",
+        "error",
+        "This NFC link is not configured."
+      );
+
+      const footer = createElement(
+        "div",
+        "footer",
+        "MADE FOR MUSIC LOVERS"
+      );
+
+      app.append(
+        brand,
+        title,
+        message,
+        footer
+      );
+    }
+  </script>
+
+</body>
+</html>
